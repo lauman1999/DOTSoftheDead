@@ -1,4 +1,5 @@
-﻿using Unity.Burst;
+﻿using System.Runtime.InteropServices;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -9,7 +10,7 @@ public class AssignTargetClosestPlayerSystem : JobComponentSystem
 {
     public EntityQuery PlayersQuery;
 
-    [BurstCompile]
+    [BurstCompile]    
     struct AssignTargetClosestPlayerSystemJob : IJobForEach<Translation, MoveToTarget>
     {
         [DeallocateOnJobCompletion]

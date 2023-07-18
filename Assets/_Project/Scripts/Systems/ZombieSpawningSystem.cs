@@ -5,6 +5,12 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+//僵尸生成系统： A system provides behavior in an ECS architecture.
+//系统提供 ECS 架构中的行为特性
+// https://docs.unity3d.com/Packages/com.unity.entities@0.50/manual/upgrade-guide.html  
+// https://docs.unity3d.com/Packages/com.unity.entities@0.50/api/Unity.Entities.SystemBase.html
+// Upgrading from Entities 0.17 to Entities 0.50   Upgrade JobComponentSystem to SystemBase 
+// https://docs.unity3d.com/Packages/com.unity.entities@0.50/manual/upgrade-guide.html
 [UpdateBefore(typeof(PreTransformGroupBarrier))]
 public class ZombieSpawningSystem : JobComponentSystem
 {
@@ -69,9 +75,10 @@ public class ZombieSpawningSystem : JobComponentSystem
         NativeList<Entity> spawnedZombies = new NativeList<Entity>(Allocator.Persistent);
         for (int i = 0; i < count; i++)
         {
+            //spawnedZombies.Add(SpawnCharacterZombie(ZombiePrefab));
             spawnedZombies.Add(SpawnCharacterZombie(ZombiePrefab, MeleePrefabEntity, DropOnDeathEntities[random.NextInt(0, DropOnDeathEntities.Length) % DropOnDeathEntities.Length]));
         }
-        
+        //更新所有的系统
         TransformUtilities.UpdateTransformSystems(World);
 
         foreach (var z in spawnedZombies)
@@ -113,6 +120,45 @@ public class ZombieSpawningSystem : JobComponentSystem
         return inputDependencies;
     }
 
+    public Entity SpawnCharacterZombie1(Entity zombiePrefabEntity)
+    {
+        float randomAngle = random.NextFloat(0f, 360f);
+        float randomDistance = random.NextFloat(SpawnRadiusMinMax.x, SpawnRadiusMinMax.y);
+        float3 dir = math.mul(quaternion.RotateY(randomAngle), new float3(0, 0, 1));
+        float3 spawnPos = dir * randomDistance;
+        quaternion spawnRot = quaternion.LookRotationSafe(math.normalizesafe(-spawnPos), new float3(0f, 1f, 0f));
+
+        //这里初始化zombiePrefabEntity，是通过GameInitializer初始ZombiePrefab，
+        //通过脚本：CharacterAuthoring.cs，初始化了 Character，MeleeWeapon，Health这些组件： dstManager.AddComponentData(entity, CharacterData);
+
+        Entity charInstanceEntity = EntityManager.Instantiate(zombiePrefabEntity);
+        EntityManager.SetComponentData(charInstanceEntity, new Translation { Value = spawnPos });
+        EntityManager.SetComponentData(charInstanceEntity, new Rotation { Value = spawnRot });
+        EntityManager.AddComponentData(charInstanceEntity, new AITag());
+        EntityManager.AddComponentData(charInstanceEntity, new OwningAI { AIEntity = charInstanceEntity });
+
+        // ~10% chance of drop
+        if (random.NextInt(0, 10) == 1)
+        {
+           // EntityManager.AddComponentData(charInstanceEntity, new DropOnDeath { toDrop = dropOnDeathEntity });
+        }
+        //这里的Character 组件是之前就存在，还是现在才创建的？ lauman 23-7-17
+        Character spawnedCharacter = EntityManager.GetComponentData<Character>(charInstanceEntity);
+
+        // Give zombie the starting melee attack
+        //Entity meleeEntityInstance = EntityManager.Instantiate(startingMeleePrefabEntity);
+        // TransformUtilities.SetParent(EntityManager, spawnedCharacter.WeaponHoldPointEntity, meleeEntityInstance, false);
+        // EntityManager.AddComponentData(meleeEntityInstance, new OwningAI() { AIEntity = charInstanceEntity });
+
+        // // set active weapon on Character
+        // Character charData = EntityManager.GetComponentData<Character>(charInstanceEntity);
+        // charData.ActiveMeleeWeaponEntity = meleeEntityInstance;
+        // EntityManager.SetComponentData(charInstanceEntity, charData);
+
+        LastSpawnTime[0] = LastSpawnTime[0] + 1f / SpawnRate;
+
+        return charInstanceEntity;
+    }
     public Entity SpawnCharacterZombie(Entity zombiePrefabEntity, Entity startingMeleePrefabEntity, Entity dropOnDeathEntity)
     {
         float randomAngle = random.NextFloat(0f, 360f);
@@ -120,6 +166,9 @@ public class ZombieSpawningSystem : JobComponentSystem
         float3 dir = math.mul(quaternion.RotateY(randomAngle), new float3(0, 0, 1));
         float3 spawnPos = dir * randomDistance;
         quaternion spawnRot = quaternion.LookRotationSafe(math.normalizesafe(-spawnPos), new float3(0f, 1f, 0f));
+
+        //这里初始化zombiePrefabEntity，是通过GameInitializer初始ZombiePrefab，
+        //通过脚本：CharacterAuthoring.cs，初始化了 Character，MeleeWeapon，Health这些组件： dstManager.AddComponentData(entity, CharacterData);
 
         Entity charInstanceEntity = EntityManager.Instantiate(zombiePrefabEntity);
         EntityManager.SetComponentData(charInstanceEntity, new Translation { Value = spawnPos });
@@ -132,7 +181,7 @@ public class ZombieSpawningSystem : JobComponentSystem
         {
             EntityManager.AddComponentData(charInstanceEntity, new DropOnDeath { toDrop = dropOnDeathEntity });
         }
-
+        //这里的Character 组件是之前就存在，还是现在才创建的？ lauman 23-7-17
         Character spawnedCharacter = EntityManager.GetComponentData<Character>(charInstanceEntity);
 
         // Give zombie the starting melee attack

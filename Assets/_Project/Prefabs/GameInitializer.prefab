@@ -473,7 +473,7 @@ MonoBehaviour:
   ZombieSpawnRadiusMinMax:
     x: 150
     y: 400
-  BatchSpawnCount: 500
+  BatchSpawnCount: 1
   ZombiePrefab: {fileID: 8103165309180745786, guid: 17f46da87ef3526499aeed930121e32b,
     type: 3}
   SpawnPointZombie: {fileID: 0}

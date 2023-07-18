@@ -450,6 +450,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FramerateDebugPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 1020576454600066, guid: 6babfe004051e72409d5321118266db5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224221452225482132, guid: 6babfe004051e72409d5321118266db5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -920,6 +924,16 @@ PrefabInstance:
       propertyPath: PickUpsBounds
       value: 
       objectReference: {fileID: 2065349774}
+    - target: {fileID: 1065243801453959693, guid: 72efd03d57884154b82c7f6d943a189b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1065243801453959693, guid: 72efd03d57884154b82c7f6d943a189b,
+        type: 3}
+      propertyPath: BatchSpawnCount
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72efd03d57884154b82c7f6d943a189b, type: 3}
 --- !u!1001 &8950431157656157244
@@ -988,6 +1002,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8950431157209536937, guid: 07de36d5aeac4d54087f5f20738b6838,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8950431157209536938, guid: 07de36d5aeac4d54087f5f20738b6838,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07de36d5aeac4d54087f5f20738b6838, type: 3}

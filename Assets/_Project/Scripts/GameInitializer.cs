@@ -98,9 +98,11 @@ public class GameInitializer : MonoBehaviour
 
     void Start()
     {
+        // 全局实体管理器： 管理 World 中的实体entity和组件components
         entityManager = World.Active.EntityManager;
+        // 定义一个ECS架构的特性的Zombie生成系统
         zombieSpawnSystem = World.Active.GetOrCreateSystem<ZombieSpawningSystem>();
-
+        //定义一个 queryDesc（查询条件） 用于查找具有特定组件的原型。
         EntityQueryDesc queryDesc = new EntityQueryDesc
         {
             All = new ComponentType[] { ComponentType.ReadOnly<Character>(), ComponentType.ReadOnly<PlayerCharacter>() }
@@ -112,6 +114,15 @@ public class GameInitializer : MonoBehaviour
         //    Debug.Log("NEW DEVICE: " + device.displayName);
         //}
 
+        // 这里比较奇怪：ConvertGameObjectHierarchy在0.1已经没有这个接口，但是为什么这里使用的是0.0的接口呢？
+        //https://docs.unity3d.com/Packages/com.unity.entities@0.0/api/Unity.Entities.GameObjectConversionUtility.html
+        // ConvertGameObjectHierarchy(GameObject, World)
+        //https://docs.unity3d.com/Packages/com.unity.entities@0.1/api/Unity.Entities.GameObjectConversionUtility.html
+        // ConvertGameObjectHierarchy(GameObject, GameObjectConversionSettings)
+
+
+        //把ZombiePrefab（GameObject对象）转换成实体Entity对象(轻量级)： prefabEntityZombie
+        //GameObjectConversionUtility.ConvertGameObjectHierarchy函数从我们的Prefab中创建了一个实体对象
         startingGunPrefabEntity = GameObjectConversionUtility.ConvertGameObjectHierarchy(PlayerStartingGunPrefab, World.Active);
         playerStartingMeleePrefabEntity = GameObjectConversionUtility.ConvertGameObjectHierarchy(MeleePlayerAttackPrefab, World.Active);
         zombieStartingMeleePrefabEntity = GameObjectConversionUtility.ConvertGameObjectHierarchy(MeleeZombieAttackPrefab, World.Active);
